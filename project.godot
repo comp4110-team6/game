@@ -15,10 +15,18 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Project X"
-run/main_scene="res://GUI.tscn"
+config/name="game"
+run/main_scene="res://top.tscn"
 config/icon="res://icon.png"
+
+[display]
+
+window/size/width=1920
+window/size/height=1080
+window/size/resizable=false
+window/size/fullscreen=true
 
 [rendering]
 
-environment/default_environment="res://default_env.tres"
+threads/thread_model=2
+environment/default_clear_color=Color( 0.392157, 0.392157, 0.607843, 1 )
