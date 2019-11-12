@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+var path = \"user://settings.cfg\"
+var config = ConfigFile.new()
+
+var User
+var SFXVolume
+var MusicVolume
+
+func _ready():
+	config.load(path)
+	if not config.has_section_key(\"General\", \"User\"):
+		config.set_value(\"General\", \"User\", \"default\")
+	if not config.has_section_key(\"Audio\", \"SFXVolume\"):
+		config.set_value(\"Audio\", \"SFXVolume\", 0.75)
+	if not config.has_section_key(\"Audio\", \"MusicVolume\"):
+		config.set_value(\"Audio\", \"MusicVolume\", 0.25)
+	config.save(path)
+	loadUser(\"General\")
+	loadSFXVolume(\"Audio\")
+	loadMusicVolume(\"Audio\")
+
+
+func saveUser(section):
+	config.set_value(section, \"User\", User)
+	config.save(path)
+
+func loadUser(section):
+	User = config.get_value(section, \"User\", User)
+
+
+func saveSFXVolume(section):
+	config.set_value(section, \"SFXVolume\", SFXVolume)
+	config.save(path)
+
+func loadSFXVolume(section):
+	SFXVolume = config.get_value(section, \"SFXVolume\", SFXVolume)
+
+
+func saveMusicVolume(section):
+	config.set_value(section, \"MusicVolume\", MusicVolume)
+	config.save(path)
+
+func loadMusicVolume(section):
+	MusicVolume = config.get_value(section, \"MusicVolume\", MusicVolume)
+"
+
+[node name="ConfigurationSystem" type="Node2D"]
+script = SubResource( 1 )

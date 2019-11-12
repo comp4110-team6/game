@@ -1,0 +1,198 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://src/scenes/TitleScreen.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/scenes/OptionsScreen.tscn" type="PackedScene" id=2]
+[ext_resource path="res://src/scenes/QuitScreen.tscn" type="PackedScene" id=3]
+[ext_resource path="res://src/scenes/StageSelectScreen.tscn" type="PackedScene" id=4]
+[ext_resource path="res://src/scenes/UserEntryScreen.tscn" type="PackedScene" id=5]
+[ext_resource path="res://src/scenes/Music.tscn" type="PackedScene" id=6]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+onready var ScreenState = get_node(\"/root/Game/TitleScreen\")
+onready var LastScreenState = get_node(\"/root/Game/TitleScreen\")
+
+func updateScreenState(path):
+	LastScreenState = ScreenState
+	LastScreenState.visible = false
+	ScreenState = get_node(path)
+	ScreenState.visible = true
+
+
+#onready var LevelSelectScreen = preload(\"res://src/scenes/LevelSelectScreen.tscn\")
+
+#func generateLevelSelectScreen1():
+#	var LevelSelectScreen1 = LevelSelectScreen.instance()
+#	LevelSelectScreen1.visible = false
+#	add_child(LevelSelectScreen1)
+#	if LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\").connect(\"pressed\", self, \"_on_LevelSelectScreen1Back_pressed\"):
+#		updateScreenState(\"/root/Game/StageSelectScreen\")
+#	if $StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1/Button\").connect(\"pressed\", self, \"_on_StageSelectScreenStage1_pressed\"):
+#		updateScreenState(\"/root/Game/LevelSelectScreen1\")
+
+func _ready():
+	ScreenState.visible = true
+	$OptionsScreen.visible = false
+	$QuitScreen.visible = false
+	$StageSelectScreen.visible = false
+	$UserEntryScreen.visible = false
+	#generateLevelSelectScreen1()
+
+
+func _on_TitleScreenStart_pressed():
+	if ConfigurationSystem.User == \"default\":
+		updateScreenState(\"/root/Game/UserEntryScreen\")
+	else:
+		updateScreenState(\"/root/Game/StageSelectScreen\")
+
+func _on_TitleScreenOptions_pressed():
+	updateScreenState(\"/root/Game/OptionsScreen\")
+
+func _on_TitleScreenQuit_pressed():
+	updateScreenState(\"/root/Game/QuitScreen\")
+
+
+func _on_OptionsScreenChangeName_pressed():
+	updateScreenState(\"/root/Game/UserEntryScreen\")
+
+func _on_OptionsScreenBack_pressed():
+	updateScreenState(\"/root/Game/TitleScreen\")
+
+func _on_OptionsScreenSFXSlider_ready():
+	ConfigurationSystem.loadSFXVolume(\"Audio\")
+	var tempSFXVolume = ConfigurationSystem.SFXVolume
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider.value = tempSFXVolume * 100
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/Label2.text = String(tempSFXVolume * 100)
+
+func _on_OptionsScreenSFXSlider_value_changed(value):
+	ConfigurationSystem.SFXVolume = value / 100
+	ConfigurationSystem.saveSFXVolume(\"Audio\")
+	var tempSFXVolume = ConfigurationSystem.SFXVolume
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider.value = tempSFXVolume * 100
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/Label2.text = String(tempSFXVolume * 100)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(\"SFX\"), linear2db(tempSFXVolume))
+
+func _on_OptionsScreenMusicSlider_ready():
+	ConfigurationSystem.loadMusicVolume(\"Audio\")
+	var tempMusicVolume = ConfigurationSystem.MusicVolume
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/HSlider.value = tempMusicVolume * 100
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/Label2.text = String(tempMusicVolume * 100)
+
+func _on_OptionsScreenMusicSlider_value_changed(value):
+	ConfigurationSystem.MusicVolume = value / 100
+	ConfigurationSystem.saveMusicVolume(\"Audio\")
+	var tempMusicVolume = ConfigurationSystem.MusicVolume
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/HSlider.value = tempMusicVolume * 100
+	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/Label2.text = String(tempMusicVolume * 100)
+	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(\"Music\"), linear2db(tempMusicVolume))
+
+
+func _on_QuitScreenYes_pressed():
+	get_tree().quit()
+
+func _on_QuitScreenBack_pressed():
+	updateScreenState(\"/root/Game/TitleScreen\")
+
+
+func _on_StageSelectBack_pressed():
+	updateScreenState(\"/root/Game/TitleScreen\")
+
+
+func _on_UserEntryScreenBack_pressed():
+	updateScreenState(\"/root/Game/TitleScreen\")
+
+
+func _on_UserEntryApply_pressed():
+	if LastScreenState == get_node(\"/root/Game/TitleScreen\"):
+		updateScreenState(\"/root/Game/StageSelectScreen\")
+
+"
+
+[node name="Game" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="TitleScreen" parent="." instance=ExtResource( 1 )]
+editor/display_folded = true
+visible = false
+
+[node name="OptionsScreen" parent="." instance=ExtResource( 2 )]
+editor/display_folded = true
+
+[node name="HSlider" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX" index="1"]
+ticks_on_borders = true
+
+[node name="QuitScreen" parent="." instance=ExtResource( 3 )]
+editor/display_folded = true
+visible = false
+
+[node name="StageSelectScreen" parent="." instance=ExtResource( 4 )]
+visible = false
+
+[node name="Stage1" parent="StageSelectScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" index="0"]
+editor/display_folded = false
+
+[node name="UserEntryScreen" parent="." instance=ExtResource( 5 )]
+editor/display_folded = true
+visible = false
+
+[node name="LineEdit" parent="UserEntryScreen/CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2" index="0"]
+max_length = 20
+
+[node name="Music" parent="." instance=ExtResource( 6 )]
+[connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Start" to="." method="_on_TitleScreenStart_pressed"]
+[connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Options" to="." method="_on_TitleScreenOptions_pressed"]
+[connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Quit" to="." method="_on_TitleScreenQuit_pressed"]
+[connection signal="ready" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider" to="." method="_on_OptionsScreenSFXSlider_ready"]
+[connection signal="value_changed" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider" to="." method="_on_OptionsScreenSFXSlider_value_changed"]
+[connection signal="ready" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/HSlider" to="." method="_on_OptionsScreenMusicSlider_ready"]
+[connection signal="value_changed" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/HSlider" to="." method="_on_OptionsScreenMusicSlider_value_changed"]
+[connection signal="pressed" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/ChangeName" to="." method="_on_OptionsScreenChangeName_pressed"]
+[connection signal="pressed" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Back" to="." method="_on_OptionsScreenBack_pressed"]
+[connection signal="pressed" from="QuitScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Yes" to="." method="_on_QuitScreenYes_pressed"]
+[connection signal="pressed" from="QuitScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Back" to="." method="_on_QuitScreenBack_pressed"]
+[connection signal="pressed" from="StageSelectScreen/CenteredContainer/HBoxContainer/VBoxContainer/Button" to="." method="_on_StageSelectBack_pressed"]
+[connection signal="pressed" from="UserEntryScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Apply" to="." method="_on_UserEntryApply_pressed"]
+[connection signal="pressed" from="UserEntryScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Back" to="." method="_on_UserEntryScreenBack_pressed"]
+
+[editable path="TitleScreen"]
+
+[editable path="TitleScreen/CenteredContainer"]
+
+[editable path="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Title"]
+
+[editable path="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Start"]
+
+[editable path="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Options"]
+
+[editable path="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Quit"]
+
+[editable path="OptionsScreen"]
+
+[editable path="OptionsScreen/CenteredContainer"]
+
+[editable path="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Title"]
+
+[editable path="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX"]
+
+[editable path="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music"]
+
+[editable path="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Back"]
+
+[editable path="QuitScreen"]
+
+[editable path="QuitScreen/CenteredContainer"]
+
+[editable path="QuitScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Yes"]
+
+[editable path="QuitScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Back"]
+
+[editable path="StageSelectScreen"]
+
+[editable path="StageSelectScreen/CenteredContainer"]
+
+[editable path="StageSelectScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1"]
+
+[editable path="UserEntryScreen"]
+
+[editable path="UserEntryScreen/CenteredContainer"]
