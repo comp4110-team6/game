@@ -8,23 +8,34 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
 
+func _draw():
+	if $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text == \"\":
+		$CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Apply.disabled = true
+	else:
+		$CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Apply.disabled = false
+
 func _input(event):
 	if event.is_action_pressed(\"ui_accept\"):
-		ConfigurationSystem.User = $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text
-		if ConfigurationSystem.User == \"\":
-			ConfigurationSystem.User = \"default\"
-		ConfigurationSystem.saveUser(\"General\")
+		if not $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text == \"\":
+			ConfigurationSystem.User = $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text
+			ConfigurationSystem.saveUser(\"General\")
+
+
+func _on_LineEdit_text_changed(new_text):
+	if new_text == \"\":
+		$CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Apply.disabled = true
+	else:
+		$CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Apply.disabled = false
 
 func _on_LineEdit_ready():
-	if not ConfigurationSystem.User == \"default\":
+	if not ConfigurationSystem.User == \"\":
 		ConfigurationSystem.loadUser(\"General\")
 		var tempUser = ConfigurationSystem.User
 		$CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text = tempUser
 
+
 func _on_Apply_pressed():
 	ConfigurationSystem.User = $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text
-	if ConfigurationSystem.User == \"\":
-		ConfigurationSystem.User = \"default\"
 	ConfigurationSystem.saveUser(\"General\")
 "
 
@@ -34,44 +45,45 @@ script = SubResource( 1 )
 [node name="CenteredContainer" parent="." instance=ExtResource( 1 )]
 
 [node name="VBoxContainer" parent="CenteredContainer/HBoxContainer" index="0"]
-margin_left = 475.0
-margin_right = 805.0
+margin_left = 472.0
+margin_right = 807.0
 
 [node name="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 2 )]
-editor/display_folded = true
-margin_left = 5.0
+margin_left = 7.0
 margin_top = 290.0
-margin_right = 325.0
-margin_bottom = 330.0
+margin_right = 327.0
+margin_bottom = 320.0
 
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer" index="0"]
 text = "What would you like to be called?"
 autowrap = true
 
 [node name="MarginContainer2" type="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="1"]
-margin_top = 340.0
-margin_right = 330.0
-margin_bottom = 380.0
+margin_top = 335.0
+margin_right = 335.0
+margin_bottom = 375.0
 rect_min_size = Vector2( 320, 40 )
 
 [node name="LineEdit" type="LineEdit" parent="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2"]
-margin_left = 45.0
-margin_right = 285.0
+margin_left = 9.0
+margin_right = 326.0
 margin_bottom = 40.0
-rect_min_size = Vector2( 240, 40 )
+rect_min_size = Vector2( 317, 40 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = ExtResource( 3 )
-align = 1
 max_length = 32
+clear_button_enabled = true
 placeholder_text = "Enter text here."
 placeholder_alpha = 0.5
+caret_blink = true
+caret_blink_speed = 0.5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="2"]
 margin_top = 390.0
-margin_right = 330.0
+margin_right = 335.0
 margin_bottom = 430.0
-custom_constants/separation = 10
+custom_constants/separation = 15
 alignment = 1
 
 [node name="Apply" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
@@ -80,11 +92,12 @@ margin_bottom = 40.0
 text = "Apply"
 
 [node name="Back" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
-margin_left = 170.0
-margin_right = 330.0
+margin_left = 175.0
+margin_right = 335.0
 margin_bottom = 40.0
 text = "Back"
 [connection signal="ready" from="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit" to="." method="_on_LineEdit_ready"]
+[connection signal="text_changed" from="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit" to="." method="_on_LineEdit_text_changed"]
 [connection signal="pressed" from="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Apply" to="." method="_on_Apply_pressed"]
 
 [editable path="CenteredContainer"]

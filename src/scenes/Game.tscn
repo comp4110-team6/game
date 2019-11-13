@@ -16,48 +16,66 @@ onready var LastScreenState = get_node(\"/root/Game/TitleScreen\")
 func updateScreenState(path):
 	LastScreenState = ScreenState
 	LastScreenState.visible = false
-	ScreenState = get_node(path)
+	ScreenState = path
 	ScreenState.visible = true
 
 
-#onready var LevelSelectScreen = preload(\"res://src/scenes/LevelSelectScreen.tscn\")
+func _input(event):
+	if event.is_action_pressed(\"ui_cancel\"):
+		if ScreenState == get_node(\"/root/Game/TitleScreen\"):
+			updateScreenState(get_node(\"/root/Game/QuitScreen\"))
+		elif ScreenState == get_node(\"/root/Game/StageSelectScreen\") || \\
+		ScreenState == get_node(\"/root/Game/OptionsScreen\") || \\
+		ScreenState == get_node(\"/root/Game/QuitScreen\"):
+			updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+		else:
+			updateScreenState(LastScreenState)
 
-#func generateLevelSelectScreen1():
-#	var LevelSelectScreen1 = LevelSelectScreen.instance()
-#	LevelSelectScreen1.visible = false
-#	add_child(LevelSelectScreen1)
-#	if LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\").connect(\"pressed\", self, \"_on_LevelSelectScreen1Back_pressed\"):
-#		updateScreenState(\"/root/Game/StageSelectScreen\")
-#	if $StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1/Button\").connect(\"pressed\", self, \"_on_StageSelectScreenStage1_pressed\"):
-#		updateScreenState(\"/root/Game/LevelSelectScreen1\")
+onready var LevelSelectScreen = preload(\"res://src/scenes/LevelSelectScreen.tscn\")
 
-func _ready():
+func generateLevelSelectScreen1():
+	var LevelSelectScreen1 = LevelSelectScreen.instance()
+	LevelSelectScreen1.visible = false
+	get_node(\"/root/Game\").add_child(LevelSelectScreen1)
+	if LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\").connect(\"pressed\", self, \"_on_LevelSelectScreen1Back_pressed\"):
+		updateScreenState(\"/root/Game/StageSelectScreen\")
+	if $StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1/Button\").connect(\"pressed\", self, \"_on_StageSelectScreenStage1_pressed\"):
+		updateScreenState(\"/root/Game/LevelSelectScreen1\")
+
+func _on_StageSelectScreenStage1_pressed():
+	updateScreenState(get_node(\"/root/Game/LevelSelectScreen1\"))
+
+func _on_LevelSelectScreen1Back_pressed():
+	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
+
+
+func _draw():
 	ScreenState.visible = true
 	$OptionsScreen.visible = false
 	$QuitScreen.visible = false
 	$StageSelectScreen.visible = false
 	$UserEntryScreen.visible = false
-	#generateLevelSelectScreen1()
+	generateLevelSelectScreen1()
 
 
 func _on_TitleScreenStart_pressed():
-	if ConfigurationSystem.User == \"default\":
-		updateScreenState(\"/root/Game/UserEntryScreen\")
+	if ConfigurationSystem.User == \"\":
+		updateScreenState(get_node(\"/root/Game/UserEntryScreen\"))
 	else:
-		updateScreenState(\"/root/Game/StageSelectScreen\")
+		updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
 
 func _on_TitleScreenOptions_pressed():
-	updateScreenState(\"/root/Game/OptionsScreen\")
+	updateScreenState(get_node(\"/root/Game/OptionsScreen\"))
 
 func _on_TitleScreenQuit_pressed():
-	updateScreenState(\"/root/Game/QuitScreen\")
+	updateScreenState(get_node(\"/root/Game/QuitScreen\"))
 
 
 func _on_OptionsScreenChangeName_pressed():
-	updateScreenState(\"/root/Game/UserEntryScreen\")
+	updateScreenState(get_node(\"/root/Game/UserEntryScreen\"))
 
 func _on_OptionsScreenBack_pressed():
-	updateScreenState(\"/root/Game/TitleScreen\")
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 func _on_OptionsScreenSFXSlider_ready():
 	ConfigurationSystem.loadSFXVolume(\"Audio\")
@@ -92,20 +110,20 @@ func _on_QuitScreenYes_pressed():
 	get_tree().quit()
 
 func _on_QuitScreenBack_pressed():
-	updateScreenState(\"/root/Game/TitleScreen\")
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 
 func _on_StageSelectBack_pressed():
-	updateScreenState(\"/root/Game/TitleScreen\")
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 
 func _on_UserEntryScreenBack_pressed():
-	updateScreenState(\"/root/Game/TitleScreen\")
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 
 func _on_UserEntryApply_pressed():
 	if LastScreenState == get_node(\"/root/Game/TitleScreen\"):
-		updateScreenState(\"/root/Game/StageSelectScreen\")
+		updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
 
 "
 
@@ -118,15 +136,17 @@ visible = false
 
 [node name="OptionsScreen" parent="." instance=ExtResource( 2 )]
 editor/display_folded = true
+visible = false
 
-[node name="HSlider" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX" index="1"]
-ticks_on_borders = true
+[node name="Label" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Title" index="0"]
+margin_right = 400.0
 
 [node name="QuitScreen" parent="." instance=ExtResource( 3 )]
 editor/display_folded = true
 visible = false
 
 [node name="StageSelectScreen" parent="." instance=ExtResource( 4 )]
+editor/display_folded = true
 visible = false
 
 [node name="Stage1" parent="StageSelectScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" index="0"]
@@ -196,3 +216,5 @@ max_length = 20
 [editable path="UserEntryScreen"]
 
 [editable path="UserEntryScreen/CenteredContainer"]
+
+[editable path="UserEntryScreen/CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer"]

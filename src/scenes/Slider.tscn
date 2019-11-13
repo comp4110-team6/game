@@ -3,15 +3,15 @@
 [ext_resource path="res://src/ui/default.theme" type="Theme" id=1]
 
 [node name="HBoxContainer" type="HBoxContainer"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_right = 358.0
+margin_bottom = 30.0
 theme = ExtResource( 1 )
 alignment = 1
 
 [node name="Label" type="Label" parent="."]
 margin_right = 150.0
-margin_bottom = 50.0
-rect_min_size = Vector2( 150, 50 )
+margin_bottom = 30.0
+rect_min_size = Vector2( 150, 30 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 valign = 1
@@ -19,16 +19,17 @@ valign = 1
 [node name="HSlider" type="HSlider" parent="."]
 margin_left = 154.0
 margin_right = 304.0
-margin_bottom = 50.0
-rect_min_size = Vector2( 150, 50 )
+margin_bottom = 30.0
+rect_min_size = Vector2( 150, 30 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 step = 5.0
+ticks_on_borders = true
 
 [node name="Label2" type="Label" parent="."]
 margin_left = 308.0
 margin_right = 358.0
-margin_bottom = 50.0
-rect_min_size = Vector2( 50, 50 )
+margin_bottom = 30.0
+rect_min_size = Vector2( 50, 30 )
 align = 1
 valign = 1
