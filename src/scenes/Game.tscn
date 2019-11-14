@@ -19,7 +19,6 @@ func updateScreenState(path):
 	ScreenState = path
 	ScreenState.visible = true
 
-
 func _input(event):
 	if event.is_action_pressed(\"ui_cancel\"):
 		if ScreenState == get_node(\"/root/Game/TitleScreen\"):
@@ -31,7 +30,7 @@ func _input(event):
 		else:
 			updateScreenState(LastScreenState)
 
-
+# Generation of level select screens
 onready var LevelSelectScreen = preload(\"res://src/scenes/LevelSelectScreen.tscn\")
 onready var LevelSelectScreen1 = LevelSelectScreen.instance()
 onready var LevelSelectScreen2 = LevelSelectScreen.instance()
@@ -69,10 +68,11 @@ func generateLevelSelectScreens():
 		var temp
 		add_child(LevelSelectScreens[x])
 		LevelSelectScreens[x].visible = false
-		LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\")\\
+		LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\") \\
 		.connect(\"pressed\", self, \"_on_LevelSelectScreen\" + String(x+1) + \"Back_pressed\")
+		 # Used to get names of HBoxContainers within level select, can be optimized by renaming HBoxContainer to something more meaningful
 		if x == 0 || x == 1 || x == 2:
-			temp = \"1\"
+			temp = \"1\"				   # TODO: Fix this ugly code
 		else:
 			temp = \"2\"
 		$StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer\" + temp + \"/Stage\" + String(x+1) + \"/Button\")\\
@@ -81,6 +81,7 @@ func generateLevelSelectScreens():
 		ConfigurationSystem.loadStageScores(x+1)
 		var tempScore = ConfigurationSystem.Scores[x]
 		var tempPath
+		# The following loop displays stars based on the score for that level.
 		for i in range(3):
 			tempPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/HBoxContainer/Star\"
 			if tempScore[i] >= 33:
@@ -93,7 +94,7 @@ func generateLevelSelectScreens():
 			.connect(\"pressed\", self, \"_on_Stage\" + String(x+1) + \"Level\" + String(i+1) + \"_pressed\")
 			LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\").text = \"Level \" + String(i+1)
 
-
+# Navigate into level select from each stage select
 func _on_StageSelectScreenStage1_pressed():
 	updateScreenState(LevelSelectScreens[0])
 func _on_StageSelectScreenStage2_pressed():
@@ -105,6 +106,7 @@ func _on_StageSelectScreenStage4_pressed():
 func _on_StageSelectScreenStage5_pressed():
 	updateScreenState(LevelSelectScreens[4])
 
+# Navigate back to stage select from level
 func _on_LevelSelectScreen1Back_pressed():
 	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
 func _on_LevelSelectScreen2Back_pressed():
@@ -116,6 +118,7 @@ func _on_LevelSelectScreen4Back_pressed():
 func _on_LevelSelectScreen5Back_pressed():
 	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
 
+#TODO: Add level implementation here
 func _on_Stage1Level1_pressed():
 	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 func _on_Stage1Level2_pressed():
@@ -157,7 +160,7 @@ func _draw():
 
 
 func _on_TitleScreenStart_pressed():
-	if ConfigurationSystem.User == \"\":
+	if ConfigurationSystem.User == \"\": # If no user exists, bring them to user creation screen, else bring them to stage select
 		updateScreenState(get_node(\"/root/Game/UserEntryScreen\"))
 	else:
 		updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
@@ -226,7 +229,6 @@ func _on_UserEntryApply_pressed():
 "
 
 [node name="Game" type="Node2D"]
-editor/display_folded = true
 script = SubResource( 1 )
 
 [node name="TitleScreen" parent="." instance=ExtResource( 1 )]
@@ -234,7 +236,6 @@ editor/display_folded = true
 visible = false
 
 [node name="OptionsScreen" parent="." instance=ExtResource( 2 )]
-editor/display_folded = true
 visible = false
 
 [node name="Label" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Title" index="0"]

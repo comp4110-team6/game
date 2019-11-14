@@ -8,6 +8,8 @@
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
 
+# None of these functions should allow the user to proceed without entering some text.
+
 func _draw():
 	if $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text == \"\":
 		$CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Apply.disabled = true
