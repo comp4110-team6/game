@@ -21,6 +21,7 @@ rect_min_size = Vector2( 220, 40 )
 
 [node name="Label" parent="MarginContainer" index="0"]
 margin_right = 220.0
+margin_bottom = 40.0
 rect_min_size = Vector2( 220, 40 )
 
 [node name="MarginContainer2" type="MarginContainer" parent="."]
@@ -44,6 +45,5 @@ margin_top = 110.0
 margin_right = 210.0
 margin_bottom = 150.0
 rect_min_size = Vector2( 200, 40 )
-text = "Select Level"
 
 [editable path="MarginContainer"]

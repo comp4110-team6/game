@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/star.png-9df299030cf3d829e5065626ecc27498.stex"
+path="res://.import/star_yellow.png-8c3e1b95859316daffad61f31da030ea.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://src/ui/star.png"
-dest_files=[ "res://.import/star.png-9df299030cf3d829e5065626ecc27498.stex" ]
+source_file="res://src/ui/star_yellow.png"
+dest_files=[ "res://.import/star_yellow.png-8c3e1b95859316daffad61f31da030ea.stex" ]
 
 [params]
 
@@ -22,7 +22,7 @@ compress/normal_map=0
 flags/repeat=0
 flags/filter=true
 flags/mipmaps=false
-flags/anisotropic=false
+flags/anisotropic=true
 flags/srgb=2
 process/fix_alpha_border=true
 process/premult_alpha=false

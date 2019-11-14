@@ -18,7 +18,7 @@ func _input(event):
 	if event.is_action_pressed(\"ui_accept\"):
 		if not $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text == \"\":
 			ConfigurationSystem.User = $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text
-			ConfigurationSystem.saveUser(\"General\")
+			ConfigurationSystem.saveUser()
 
 
 func _on_LineEdit_text_changed(new_text):
@@ -29,14 +29,14 @@ func _on_LineEdit_text_changed(new_text):
 
 func _on_LineEdit_ready():
 	if not ConfigurationSystem.User == \"\":
-		ConfigurationSystem.loadUser(\"General\")
+		ConfigurationSystem.loadUser()
 		var tempUser = ConfigurationSystem.User
 		$CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text = tempUser
 
 
 func _on_Apply_pressed():
 	ConfigurationSystem.User = $CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2/LineEdit.text
-	ConfigurationSystem.saveUser(\"General\")
+	ConfigurationSystem.saveUser()
 "
 
 [node name="UserEntryScreen" type="Node2D"]

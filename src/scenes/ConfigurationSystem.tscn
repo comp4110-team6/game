@@ -10,42 +10,77 @@ var User
 var SFXVolume
 var MusicVolume
 
+var Stage1
+var Stage2
+var Stage3
+var Stage4
+var Stage5
+var Scores = [Stage1, Stage2, Stage3, Stage4, Stage5]
+
 func _ready():
 	config.load(path)
 	if not config.has_section_key(\"General\", \"User\"):
-		config.set_value(\"General\", \"User\", \"default\")
+		config.set_value(\"General\", \"User\", \"\")
+	if not config.has_section_key(\"Scores\", \"Stage1\"):
+		config.set_value(\"Scores\", \"Stage1\", Vector3(0, 50, 100))
+	if not config.has_section_key(\"Scores\", \"Stage2\"):
+		config.set_value(\"Scores\", \"Stage2\", Vector3(50, 100, 0))
+	if not config.has_section_key(\"Scores\", \"Stage3\"):
+		config.set_value(\"Scores\", \"Stage3\", Vector3(100, 0, 50))
+	if not config.has_section_key(\"Scores\", \"Stage4\"):
+		config.set_value(\"Scores\", \"Stage4\", Vector3(0, 50, 100))
+	if not config.has_section_key(\"Scores\", \"Stage5\"):
+		config.set_value(\"Scores\", \"Stage5\", Vector3(50, 100, 0))
 	if not config.has_section_key(\"Audio\", \"SFXVolume\"):
 		config.set_value(\"Audio\", \"SFXVolume\", 0.75)
 	if not config.has_section_key(\"Audio\", \"MusicVolume\"):
 		config.set_value(\"Audio\", \"MusicVolume\", 0.25)
 	config.save(path)
-	loadUser(\"General\")
-	loadSFXVolume(\"Audio\")
-	loadMusicVolume(\"Audio\")
+	loadUser()
+	loadScores()
+	loadSFXVolume()
+	loadMusicVolume()
 
 
-func saveUser(section):
-	config.set_value(section, \"User\", User)
+func saveUser():
+	config.set_value(\"General\", \"User\", User)
 	config.save(path)
 
-func loadUser(section):
-	User = config.get_value(section, \"User\", User)
+func loadUser():
+	User = config.get_value(\"General\", \"User\", User)
 
 
-func saveSFXVolume(section):
-	config.set_value(section, \"SFXVolume\", SFXVolume)
+func saveStageScores(stage):
+	config.set_value(\"Scores\", \"Stage\" + String(stage), Scores[stage-1])
 	config.save(path)
 
-func loadSFXVolume(section):
-	SFXVolume = config.get_value(section, \"SFXVolume\", SFXVolume)
+func loadStageScores(stage):
+	Scores[stage-1] = config.get_value(\"Scores\", \"Stage\" + String(stage), Scores[stage-1])
 
 
-func saveMusicVolume(section):
-	config.set_value(section, \"MusicVolume\", MusicVolume)
+func saveScores():
+	for i in range(5):
+		 saveStageScores(i+1)
+
+func loadScores():
+	for i in range(5):
+		 loadStageScores(i+1)
+
+
+func saveSFXVolume():
+	config.set_value(\"Audio\", \"SFXVolume\", SFXVolume)
 	config.save(path)
 
-func loadMusicVolume(section):
-	MusicVolume = config.get_value(section, \"MusicVolume\", MusicVolume)
+func loadSFXVolume():
+	SFXVolume = config.get_value(\"Audio\", \"SFXVolume\", SFXVolume)
+
+
+func saveMusicVolume():
+	config.set_value(\"Audio\", \"MusicVolume\", MusicVolume)
+	config.save(path)
+
+func loadMusicVolume():
+	MusicVolume = config.get_value(\"Audio\", \"MusicVolume\", MusicVolume)
 "
 
 [node name="ConfigurationSystem" type="Node2D"]

@@ -31,23 +31,121 @@ func _input(event):
 		else:
 			updateScreenState(LastScreenState)
 
-onready var LevelSelectScreen = preload(\"res://src/scenes/LevelSelectScreen.tscn\")
 
-func generateLevelSelectScreen1():
-	var LevelSelectScreen1 = LevelSelectScreen.instance()
-	LevelSelectScreen1.visible = false
-	get_node(\"/root/Game\").add_child(LevelSelectScreen1)
-	if LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\").connect(\"pressed\", self, \"_on_LevelSelectScreen1Back_pressed\"):
-		updateScreenState(\"/root/Game/StageSelectScreen\")
-	if $StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1/Button\").connect(\"pressed\", self, \"_on_StageSelectScreenStage1_pressed\"):
-		updateScreenState(\"/root/Game/LevelSelectScreen1\")
+onready var LevelSelectScreen = preload(\"res://src/scenes/LevelSelectScreen.tscn\")
+onready var LevelSelectScreen1 = LevelSelectScreen.instance()
+onready var LevelSelectScreen2 = LevelSelectScreen.instance()
+onready var LevelSelectScreen3 = LevelSelectScreen.instance()
+onready var LevelSelectScreen4 = LevelSelectScreen.instance()
+onready var LevelSelectScreen5 = LevelSelectScreen.instance()
+onready var LevelSelectScreens = [LevelSelectScreen1, LevelSelectScreen2, LevelSelectScreen3, LevelSelectScreen4, LevelSelectScreen5]
+onready var star_gray = preload(\"res://src/ui/star_yellow.png\")
+
+#func generateLevelSelectScreen1():
+#	add_child(LevelSelectScreen1)
+#	LevelSelectScreen1.visible = false
+#	LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\")\\
+#	.connect(\"pressed\", self, \"_on_LevelSelectScreen1Back_pressed\")
+#	$StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1/Button\")\\
+#	.connect(\"pressed\", self, \"_on_StageSelectScreenStage1_pressed\")
+#	LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer/Label\").text = \"Stage 1\"
+#	ConfigurationSystem.loadStageScores(1)
+#	var tempScore = ConfigurationSystem.Stage1Scores
+#	var tempPath
+#	for i in range(3):
+#		tempPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer/HBoxContainer/Star\"
+#		if tempScore[i] >= 33:
+#			LevelSelectScreen1.get_node(tempPath + \"1\").visible = true
+#		if tempScore[i] >= 67:
+#			LevelSelectScreen1.get_node(tempPath + \"2\").visible = true
+#		if tempScore[i] == 100:
+#			LevelSelectScreen1.get_node(tempPath + \"3\").visible = true
+#		LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\")\\
+#		.connect(\"pressed\", self, \"_on_Stage1Level\" + String(i+1) + \"_pressed\")
+#		LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\").text = \"Level \" + String(i+1)
+
+func generateLevelSelectScreens():
+	for x in range(5):
+		var temp
+		add_child(LevelSelectScreens[x])
+		LevelSelectScreens[x].visible = false
+		LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\")\\
+		.connect(\"pressed\", self, \"_on_LevelSelectScreen\" + String(x+1) + \"Back_pressed\")
+		if x == 0 || x == 1 || x == 2:
+			temp = \"1\"
+		else:
+			temp = \"2\"
+		$StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer\" + temp + \"/Stage\" + String(x+1) + \"/Button\")\\
+		.connect(\"pressed\", self, \"_on_StageSelectScreenStage\" + String(x+1) + \"_pressed\")
+		LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer/Label\").text = \"Stage \" + String(x+1)
+		ConfigurationSystem.loadStageScores(x+1)
+		var tempScore = ConfigurationSystem.Scores[x]
+		var tempPath
+		for i in range(3):
+			tempPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/HBoxContainer/Star\"
+			if tempScore[i] >= 33:
+				LevelSelectScreens[x].get_node(tempPath + \"1\").set_texture(star_gray)
+			if tempScore[i] >= 67:
+				LevelSelectScreens[x].get_node(tempPath + \"2\").set_texture(star_gray)
+			if tempScore[i] == 100:
+				LevelSelectScreens[x].get_node(tempPath + \"3\").set_texture(star_gray)
+			LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\")\\
+			.connect(\"pressed\", self, \"_on_Stage\" + String(x+1) + \"Level\" + String(i+1) + \"_pressed\")
+			LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\").text = \"Level \" + String(i+1)
+
 
 func _on_StageSelectScreenStage1_pressed():
-	updateScreenState(get_node(\"/root/Game/LevelSelectScreen1\"))
+	updateScreenState(LevelSelectScreens[0])
+func _on_StageSelectScreenStage2_pressed():
+	updateScreenState(LevelSelectScreens[1])
+func _on_StageSelectScreenStage3_pressed():
+	updateScreenState(LevelSelectScreens[2])
+func _on_StageSelectScreenStage4_pressed():
+	updateScreenState(LevelSelectScreens[3])
+func _on_StageSelectScreenStage5_pressed():
+	updateScreenState(LevelSelectScreens[4])
 
 func _on_LevelSelectScreen1Back_pressed():
 	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
+func _on_LevelSelectScreen2Back_pressed():
+	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
+func _on_LevelSelectScreen3Back_pressed():
+	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
+func _on_LevelSelectScreen4Back_pressed():
+	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
+func _on_LevelSelectScreen5Back_pressed():
+	updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
 
+func _on_Stage1Level1_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage1Level2_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage1Level3_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage2Level1_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage2Level2_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage2Level3_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage3Level1_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage3Level2_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage3Level3_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage4Level1_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage4Level2_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage4Level3_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage5Level1_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage5Level2_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+func _on_Stage5Level3_pressed():
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 func _draw():
 	ScreenState.visible = true
@@ -55,7 +153,7 @@ func _draw():
 	$QuitScreen.visible = false
 	$StageSelectScreen.visible = false
 	$UserEntryScreen.visible = false
-	generateLevelSelectScreen1()
+	generateLevelSelectScreens()
 
 
 func _on_TitleScreenStart_pressed():
@@ -78,28 +176,28 @@ func _on_OptionsScreenBack_pressed():
 	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 func _on_OptionsScreenSFXSlider_ready():
-	ConfigurationSystem.loadSFXVolume(\"Audio\")
+	ConfigurationSystem.loadSFXVolume()
 	var tempSFXVolume = ConfigurationSystem.SFXVolume
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider.value = tempSFXVolume * 100
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/Label2.text = String(tempSFXVolume * 100)
 
 func _on_OptionsScreenSFXSlider_value_changed(value):
 	ConfigurationSystem.SFXVolume = value / 100
-	ConfigurationSystem.saveSFXVolume(\"Audio\")
+	ConfigurationSystem.saveSFXVolume()
 	var tempSFXVolume = ConfigurationSystem.SFXVolume
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider.value = tempSFXVolume * 100
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/Label2.text = String(tempSFXVolume * 100)
 	AudioServer.set_bus_volume_db(AudioServer.get_bus_index(\"SFX\"), linear2db(tempSFXVolume))
 
 func _on_OptionsScreenMusicSlider_ready():
-	ConfigurationSystem.loadMusicVolume(\"Audio\")
+	ConfigurationSystem.loadMusicVolume()
 	var tempMusicVolume = ConfigurationSystem.MusicVolume
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/HSlider.value = tempMusicVolume * 100
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/Label2.text = String(tempMusicVolume * 100)
 
 func _on_OptionsScreenMusicSlider_value_changed(value):
 	ConfigurationSystem.MusicVolume = value / 100
-	ConfigurationSystem.saveMusicVolume(\"Audio\")
+	ConfigurationSystem.saveMusicVolume()
 	var tempMusicVolume = ConfigurationSystem.MusicVolume
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/HSlider.value = tempMusicVolume * 100
 	$OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/Label2.text = String(tempMusicVolume * 100)
@@ -128,6 +226,7 @@ func _on_UserEntryApply_pressed():
 "
 
 [node name="Game" type="Node2D"]
+editor/display_folded = true
 script = SubResource( 1 )
 
 [node name="TitleScreen" parent="." instance=ExtResource( 1 )]
@@ -148,9 +247,6 @@ visible = false
 [node name="StageSelectScreen" parent="." instance=ExtResource( 4 )]
 editor/display_folded = true
 visible = false
-
-[node name="Stage1" parent="StageSelectScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" index="0"]
-editor/display_folded = false
 
 [node name="UserEntryScreen" parent="." instance=ExtResource( 5 )]
 editor/display_folded = true
@@ -210,8 +306,6 @@ max_length = 20
 [editable path="StageSelectScreen"]
 
 [editable path="StageSelectScreen/CenteredContainer"]
-
-[editable path="StageSelectScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1"]
 
 [editable path="UserEntryScreen"]
 
