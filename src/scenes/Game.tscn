@@ -225,7 +225,6 @@ func _on_UserEntryScreenBack_pressed():
 func _on_UserEntryApply_pressed():
 	if LastScreenState == get_node(\"/root/Game/TitleScreen\"):
 		updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
-
 "
 
 [node name="Game" type="Node2D"]
@@ -236,6 +235,7 @@ editor/display_folded = true
 visible = false
 
 [node name="OptionsScreen" parent="." instance=ExtResource( 2 )]
+editor/display_folded = true
 visible = false
 
 [node name="Label" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Title" index="0"]
