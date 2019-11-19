@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://src/scenes/TitleScreen.tscn" type="PackedScene" id=1]
 [ext_resource path="res://src/scenes/OptionsScreen.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://src/scenes/StageSelectScreen.tscn" type="PackedScene" id=4]
 [ext_resource path="res://src/scenes/UserEntryScreen.tscn" type="PackedScene" id=5]
 [ext_resource path="res://src/scenes/Music.tscn" type="PackedScene" id=6]
+[ext_resource path="res://src/scenes/Test.tscn" type="PackedScene" id=7]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
@@ -39,29 +40,6 @@ onready var LevelSelectScreen4 = LevelSelectScreen.instance()
 onready var LevelSelectScreen5 = LevelSelectScreen.instance()
 onready var LevelSelectScreens = [LevelSelectScreen1, LevelSelectScreen2, LevelSelectScreen3, LevelSelectScreen4, LevelSelectScreen5]
 onready var star_gray = preload(\"res://src/ui/star_yellow.png\")
-
-#func generateLevelSelectScreen1():
-#	add_child(LevelSelectScreen1)
-#	LevelSelectScreen1.visible = false
-#	LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\")\\
-#	.connect(\"pressed\", self, \"_on_LevelSelectScreen1Back_pressed\")
-#	$StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Stage1/Button\")\\
-#	.connect(\"pressed\", self, \"_on_StageSelectScreenStage1_pressed\")
-#	LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer/Label\").text = \"Stage 1\"
-#	ConfigurationSystem.loadStageScores(1)
-#	var tempScore = ConfigurationSystem.Stage1Scores
-#	var tempPath
-#	for i in range(3):
-#		tempPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer/HBoxContainer/Star\"
-#		if tempScore[i] >= 33:
-#			LevelSelectScreen1.get_node(tempPath + \"1\").visible = true
-#		if tempScore[i] >= 67:
-#			LevelSelectScreen1.get_node(tempPath + \"2\").visible = true
-#		if tempScore[i] == 100:
-#			LevelSelectScreen1.get_node(tempPath + \"3\").visible = true
-#		LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\")\\
-#		.connect(\"pressed\", self, \"_on_Stage1Level\" + String(i+1) + \"_pressed\")
-#		LevelSelectScreen1.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\").text = \"Level \" + String(i+1)
 
 func generateLevelSelectScreens():
 	for x in range(5):
@@ -151,11 +129,12 @@ func _on_Stage5Level3_pressed():
 	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 func _draw():
-	ScreenState.visible = true
+	ScreenState.visible = false
 	$OptionsScreen.visible = false
 	$QuitScreen.visible = false
 	$StageSelectScreen.visible = false
 	$UserEntryScreen.visible = false
+	$Test.visible = true
 	generateLevelSelectScreens()
 
 
@@ -257,6 +236,8 @@ visible = false
 max_length = 20
 
 [node name="Music" parent="." instance=ExtResource( 6 )]
+
+[node name="Test" parent="." instance=ExtResource( 7 )]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Start" to="." method="_on_TitleScreenStart_pressed"]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Options" to="." method="_on_TitleScreenOptions_pressed"]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Quit" to="." method="_on_TitleScreenQuit_pressed"]
