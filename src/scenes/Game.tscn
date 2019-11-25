@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://src/scenes/TitleScreen.tscn" type="PackedScene" id=1]
 [ext_resource path="res://src/scenes/OptionsScreen.tscn" type="PackedScene" id=2]
@@ -6,7 +6,6 @@
 [ext_resource path="res://src/scenes/StageSelectScreen.tscn" type="PackedScene" id=4]
 [ext_resource path="res://src/scenes/UserEntryScreen.tscn" type="PackedScene" id=5]
 [ext_resource path="res://src/scenes/Music.tscn" type="PackedScene" id=6]
-[ext_resource path="res://src/scenes/Test.tscn" type="PackedScene" id=7]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
@@ -236,8 +235,6 @@ visible = false
 max_length = 20
 
 [node name="Music" parent="." instance=ExtResource( 6 )]
-
-[node name="Test" parent="." instance=ExtResource( 7 )]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Start" to="." method="_on_TitleScreenStart_pressed"]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Options" to="." method="_on_TitleScreenOptions_pressed"]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Quit" to="." method="_on_TitleScreenQuit_pressed"]
