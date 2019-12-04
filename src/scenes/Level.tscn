@@ -1,16 +1,27 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=19 format=2]
 
-[ext_resource path="res://src/ui/heart.png" type="Texture" id=1]
-[ext_resource path="res://src/ui/fonts/PatuaOne-Regular.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://src/scenes/Bucket.tscn" type="PackedScene" id=3]
-[ext_resource path="res://src/audio/sounds/correct.ogg" type="AudioStream" id=4]
-[ext_resource path="res://src/audio/sounds/incorrect.ogg" type="AudioStream" id=5]
-[ext_resource path="res://src/audio/sounds/three.ogg" type="AudioStream" id=6]
-[ext_resource path="res://src/audio/sounds/two.ogg" type="AudioStream" id=7]
-[ext_resource path="res://src/audio/sounds/one.ogg" type="AudioStream" id=8]
+[ext_resource path="res://src/scenes/CenteredContainer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/ui/default.theme" type="Theme" id=2]
+[ext_resource path="res://src/scenes/LabelTitle.tscn" type="PackedScene" id=3]
+[ext_resource path="res://src/scenes/Button.tscn" type="PackedScene" id=4]
+[ext_resource path="res://src/scenes/LabelText.tscn" type="PackedScene" id=5]
+[ext_resource path="res://src/ui/fonts/PatuaOne-Regular.ttf" type="DynamicFontData" id=6]
+[ext_resource path="res://src/ui/heart.png" type="Texture" id=7]
+[ext_resource path="res://src/scenes/Bucket.tscn" type="PackedScene" id=8]
+[ext_resource path="res://src/audio/sounds/correct.ogg" type="AudioStream" id=9]
+[ext_resource path="res://src/audio/sounds/incorrect.ogg" type="AudioStream" id=10]
+[ext_resource path="res://src/audio/sounds/three.ogg" type="AudioStream" id=11]
+[ext_resource path="res://src/audio/sounds/two.ogg" type="AudioStream" id=12]
+[ext_resource path="res://src/audio/sounds/one.ogg" type="AudioStream" id=13]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
+
+var stage
+var level
+var state = 0 # 0 for countdown, 1 for running, 2 for paused, 3 for results
+var done = false
+var exit = false
 
 var height = ProjectSettings.get_setting(\"display/window/size/height\")
 const ORB_BUFFER = 60 # half of orb sprite plus 30
@@ -20,17 +31,77 @@ onready var Orb1 = null
 onready var Orb2 = null
 onready var Orb3 = null
 onready var Orbs = [Orb1, Orb2, Orb3]
+var speeds = Vector3(0, 0, 0)
 
 var question = \"\"
 var answers = []
 
-var problems = 30
 var hearts = 3
 var score = 0
-var difficulty = 1
+
+var problemNumber
+var problems = []
+var problem
+var resultsFlag = false
+var difficulty
+var type
 
 var seconds = 3
 var tierces = 60
+
+func _input(event):
+	if event.is_action_pressed(\"ui_cancel\"):
+		if state == 1:
+			changeStatePause()
+		elif state == 2:
+			changeStateContinue()
+		elif state == 3:
+			done = true
+
+func changeStatePause():
+	for i in range(3):
+		if Orbs[i] != null:
+			speeds[i] = Orbs[i].speed
+			Orbs[i].speed = 0
+			Orbs[i].visible = false
+		state = 2
+		$PauseScreen.visible = true
+		$Hearts.visible = false
+		$Label1.visible = false
+		$Label2.visible = false
+		$Bucket.visible = false
+
+func changeStateContinue():
+	for i in range(3):
+		if Orbs[i] != null:
+			Orbs[i].speed = speeds[i]
+			Orbs[i].visible = true
+		state = 1
+		$PauseScreen.visible = false
+		$Hearts.visible = true
+		$Label1.visible = true
+		$Label2.visible = true
+		$Bucket.visible = true
+
+func _draw():
+	# setting level type
+	if stage == 1:
+		type = \"addition\"
+	elif stage == 2:
+		type = \"subtraction\"
+	elif stage == 3:
+		type = \"multiplication\"
+	elif stage == 4:
+		type = \"division\"
+	# setting level difficulty
+	difficulty = level
+	# setting level problem number
+	if difficulty == 1:
+		problemNumber = 30
+	elif difficulty == 2:
+		problemNumber = 40
+	elif difficulty == 3:
+		problemNumber = 50
 
 func _physics_process(delta):
 	tierces += 1
@@ -50,6 +121,7 @@ func _physics_process(delta):
 				$Label3.text = \"\"
 				$Bucket.visible = true
 				$Hearts.visible = true
+				state = 1
 			seconds -= 1
 			return
 	else:
@@ -60,24 +132,31 @@ func _physics_process(delta):
 						DeleteOrbSelf(i)
 					elif Orbs[i].move_and_collide(Vector2(0,0)) != null:
 						$Sounds/Incorrect.play()
+						problem += \"    You chose: \" + String(Orbs[i].get_node(\"Sprite/Label\").text)
+						problems.append(problem)
 						UpdateHearts()
 						DeleteOrbSelf(i)
 						DeleteOrbOthers(i)
 				elif Orbs[i].IsCorrect == 1:
 					if Orbs[i].position.y + ORB_BUFFER >= height:
 						$Sounds/Incorrect.play()
+						problem += \"    You chose: \" + String(Orbs[i].get_node(\"Sprite/Label\").text)
+						problems.append(problem)
 						UpdateHearts()
 						DeleteOrbSelf(i)
 						DeleteOrbOthers(i)
 					elif Orbs[i].move_and_collide(Vector2(0,0)) != null:
 						$Sounds/Correct.play()
+						problems.append(problem)
 						UpdateScore()
 						DeleteOrbSelf(i)
 						DeleteOrbOthers(i)
 		if (Orbs[0] == null) and (Orbs[1] == null) and (Orbs[2] == null):
-			if problems > 0:
+			if problemNumber > 0:
 				OrbsSpawner()
-				problems -= 1
+				problemNumber -= 1
+			elif problemNumber == 0:
+				showResultsHelper()
 
 func DeleteOrbSelf(i):
 	Orbs[i].queue_free()
@@ -92,14 +171,14 @@ func DeleteOrbOthers(i):
 		Orbs[(i+2)%3] = null
 
 func UpdateHearts():
-	if hearts > 2:
+	if hearts > 1:
 		hearts -= 1
 		if hearts == 2:
 			$Hearts/Heart3.visible = false
 		if hearts == 1:
 			$Hearts/Heart2.visible = false
 	elif hearts == 1:
-		problems = 0
+		problemNumber = 0
 		$Hearts/Heart1.visible = false
 		$Label1.text = \"Game Over\"
 
@@ -117,7 +196,7 @@ func OrbsSpawner():
 	orb_positions.append((randi() % 356) + 462)
 	orb_positions.append((randi() % 352) + 878)
 	
-	ProblemGenerator(\"addition\")
+	ProblemGenerator(type)
 	
 	for i in range(3):
 		# instance 3 new orbs
@@ -185,22 +264,146 @@ func ProblemGenerator(type):
 	answers.append(temp_answers[0])
 	answers.append(temp_answers[1])
 	answers.shuffle()
+	
+	problem = String(problems.size() + 1) + \".    \" + question + \" = \" + String(answer)
+
+func showResultsHelper():
+	if resultsFlag == false:
+		for i in range(problems.size()):
+			if i > 0:
+				$ResultsScreen/HBoxContainer/VBoxContainer/RichTextLabel.text += \"\\n\"
+			$ResultsScreen/HBoxContainer/VBoxContainer/RichTextLabel.text += problems[i]
+		$ResultsScreen.visible = true
+		$Hearts.visible = false
+		$Label1.visible = false
+		$Label2.visible = false
+		$Bucket.visible = false
+		resultsFlag = true
+		state = 3
+		var temp_x = ConfigurationSystem.Scores[stage - 1].x
+		var temp_y = ConfigurationSystem.Scores[stage - 1].y
+		var temp_z = ConfigurationSystem.Scores[stage - 1].z
+		var temps = Vector3(temp_x, temp_y, temp_z)
+		if score > temps[level - 1]:
+			$ResultsScreen/HBoxContainer/VBoxContainer/MarginContainer2.visible = true
+
+func _on_PauseScreenContinue_pressed():
+	changeStateContinue()
+
+func _on_PauseScreenExit_pressed():
+	exit = true
+
+func _on_ResultsScreenExit_pressed():
+	done = true
 "
 
 [sub_resource type="DynamicFont" id=2]
-size = 60
-font_data = ExtResource( 2 )
+size = 20
+font_data = ExtResource( 6 )
 
 [sub_resource type="DynamicFont" id=3]
-size = 30
-font_data = ExtResource( 2 )
+size = 60
+font_data = ExtResource( 6 )
 
 [sub_resource type="DynamicFont" id=4]
+size = 30
+font_data = ExtResource( 6 )
+
+[sub_resource type="DynamicFont" id=5]
 size = 200
-font_data = ExtResource( 2 )
+font_data = ExtResource( 6 )
 
 [node name="Level" type="Node2D"]
 script = SubResource( 1 )
+
+[node name="PauseScreen" parent="." instance=ExtResource( 1 )]
+editor/display_folded = true
+visible = false
+theme = ExtResource( 2 )
+
+[node name="VBoxContainer" parent="PauseScreen/HBoxContainer" index="0"]
+margin_left = 425.0
+margin_right = 854.0
+
+[node name="MarginContainer" parent="PauseScreen/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 3 )]
+editor/display_folded = true
+margin_top = 252.0
+margin_right = 429.0
+margin_bottom = 312.0
+
+[node name="Label" parent="PauseScreen/HBoxContainer/VBoxContainer/MarginContainer" index="0"]
+margin_right = 429.0
+text = "Game Paused"
+
+[node name="Continue" parent="PauseScreen/HBoxContainer/VBoxContainer" index="1" instance=ExtResource( 4 )]
+margin_left = 134.0
+margin_top = 327.0
+margin_right = 294.0
+margin_bottom = 367.0
+text = "Continue"
+
+[node name="Exit" parent="PauseScreen/HBoxContainer/VBoxContainer" index="2" instance=ExtResource( 4 )]
+margin_left = 134.0
+margin_top = 382.0
+margin_right = 294.0
+margin_bottom = 422.0
+text = "Exit"
+
+[node name="MarginContainer2" parent="PauseScreen/HBoxContainer/VBoxContainer" index="3" instance=ExtResource( 5 )]
+margin_top = 437.0
+margin_right = 429.0
+margin_bottom = 467.0
+rect_min_size = Vector2( 400, 30 )
+
+[node name="Label" parent="PauseScreen/HBoxContainer/VBoxContainer/MarginContainer2" index="0"]
+margin_right = 429.0
+text = "Your progress will not be saved if you exit now!"
+
+[node name="ResultsScreen" parent="." instance=ExtResource( 1 )]
+visible = false
+theme = ExtResource( 2 )
+
+[node name="VBoxContainer" parent="ResultsScreen/HBoxContainer" index="0"]
+margin_left = 440.0
+margin_right = 840.0
+
+[node name="MarginContainer" parent="ResultsScreen/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 3 )]
+editor/display_folded = true
+margin_top = 95.0
+margin_right = 400.0
+margin_bottom = 155.0
+
+[node name="Label" parent="ResultsScreen/HBoxContainer/VBoxContainer/MarginContainer" index="0"]
+text = "Results"
+
+[node name="MarginContainer2" parent="ResultsScreen/HBoxContainer/VBoxContainer" index="1" instance=ExtResource( 5 )]
+visible = false
+margin_left = 40.0
+margin_top = 147.0
+margin_right = 360.0
+margin_bottom = 177.0
+
+[node name="Label" parent="ResultsScreen/HBoxContainer/VBoxContainer/MarginContainer2" index="0"]
+text = "New High Score!"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="ResultsScreen/HBoxContainer/VBoxContainer" index="2"]
+margin_left = 50.0
+margin_top = 170.0
+margin_right = 350.0
+margin_bottom = 570.0
+rect_min_size = Vector2( 300, 400 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme = ExtResource( 2 )
+custom_fonts/normal_font = SubResource( 2 )
+custom_colors/default_color = Color( 1, 1, 1, 1 )
+
+[node name="Exit" parent="ResultsScreen/HBoxContainer/VBoxContainer" index="3" instance=ExtResource( 4 )]
+margin_left = 120.0
+margin_top = 585.0
+margin_right = 280.0
+margin_bottom = 625.0
+text = "Exit"
 
 [node name="Hearts" type="HBoxContainer" parent="."]
 editor/display_folded = true
@@ -219,7 +422,7 @@ margin_bottom = 50.0
 rect_min_size = Vector2( 50, 50 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = ExtResource( 1 )
+texture = ExtResource( 7 )
 expand = true
 stretch_mode = 1
 
@@ -230,7 +433,7 @@ margin_bottom = 50.0
 rect_min_size = Vector2( 50, 50 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = ExtResource( 1 )
+texture = ExtResource( 7 )
 expand = true
 stretch_mode = 1
 
@@ -241,15 +444,15 @@ margin_bottom = 50.0
 rect_min_size = Vector2( 50, 50 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = ExtResource( 1 )
+texture = ExtResource( 7 )
 expand = true
 stretch_mode = 1
 
 [node name="Label1" type="Label" parent="."]
 margin_right = 1280.0
 margin_bottom = 160.0
-custom_fonts/font = SubResource( 2 )
-custom_colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+custom_fonts/font = SubResource( 3 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 align = 1
 valign = 1
 
@@ -257,18 +460,19 @@ valign = 1
 margin_left = 20.0
 margin_right = 1260.0
 margin_bottom = 60.0
-custom_fonts/font = SubResource( 3 )
-custom_colors/font_color = Color( 0.878431, 0.878431, 0.878431, 1 )
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 valign = 1
 
 [node name="Label3" type="Label" parent="."]
 margin_right = 1280.0
 margin_bottom = 720.0
-custom_fonts/font = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 align = 1
 valign = 1
 
-[node name="Bucket" parent="." instance=ExtResource( 3 )]
+[node name="Bucket" parent="." instance=ExtResource( 8 )]
 visible = false
 position = Vector2( 640, 660 )
 
@@ -276,21 +480,36 @@ position = Vector2( 640, 660 )
 editor/display_folded = true
 
 [node name="Correct" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 4 )
+stream = ExtResource( 9 )
 volume_db = -20.0
 
 [node name="Incorrect" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 5 )
+stream = ExtResource( 10 )
 volume_db = -20.0
 
 [node name="Three" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 6 )
+stream = ExtResource( 11 )
 volume_db = -10.0
 
 [node name="Two" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 7 )
+stream = ExtResource( 12 )
 volume_db = -10.0
 
 [node name="One" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource( 8 )
+stream = ExtResource( 13 )
 volume_db = -10.0
+[connection signal="pressed" from="PauseScreen/HBoxContainer/VBoxContainer/Continue" to="." method="_on_PauseScreenContinue_pressed"]
+[connection signal="pressed" from="PauseScreen/HBoxContainer/VBoxContainer/Exit" to="." method="_on_PauseScreenExit_pressed"]
+[connection signal="pressed" from="ResultsScreen/HBoxContainer/VBoxContainer/Exit" to="." method="_on_ResultsScreenExit_pressed"]
+
+[editable path="PauseScreen"]
+
+[editable path="PauseScreen/HBoxContainer/VBoxContainer/MarginContainer"]
+
+[editable path="PauseScreen/HBoxContainer/VBoxContainer/MarginContainer2"]
+
+[editable path="ResultsScreen"]
+
+[editable path="ResultsScreen/HBoxContainer/VBoxContainer/MarginContainer"]
+
+[editable path="ResultsScreen/HBoxContainer/VBoxContainer/MarginContainer2"]

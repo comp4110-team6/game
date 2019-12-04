@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="rewrite"
+config/name="Tap Tap Computation"
 run/main_scene="res://src/scenes/Game.tscn"
 config/icon="res://icon.png"
 

@@ -14,37 +14,40 @@ margin_left = 415.0
 margin_right = 865.0
 
 [node name="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 2 )]
-margin_top = 250.0
+margin_top = 245.0
 margin_right = 450.0
-margin_bottom = 310.0
+margin_bottom = 305.0
 
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 450.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="1"]
-margin_top = 325.0
+margin_top = 320.0
 margin_right = 450.0
-margin_bottom = 415.0
+margin_bottom = 420.0
 custom_constants/separation = 15
 alignment = 1
 
 [node name="Panel1" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 3 )]
+margin_bottom = 100.0
 
 [node name="Panel2" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 3 )]
 editor/display_folded = true
 margin_left = 155.0
 margin_right = 295.0
+margin_bottom = 100.0
 
 [node name="Panel3" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 3 )]
 editor/display_folded = true
 margin_left = 310.0
 margin_right = 450.0
+margin_bottom = 100.0
 
 [node name="Back" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="2" instance=ExtResource( 4 )]
 margin_left = 145.0
-margin_top = 430.0
+margin_top = 435.0
 margin_right = 305.0
-margin_bottom = 470.0
+margin_bottom = 475.0
 text = "Back"
 
 [editable path="CenteredContainer"]

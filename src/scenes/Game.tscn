@@ -21,7 +21,9 @@ func updateScreenState(path):
 
 func _input(event):
 	if event.is_action_pressed(\"ui_cancel\"):
-		if ScreenState == get_node(\"/root/Game/TitleScreen\"):
+		if (CurrentLevel != null) and (ScreenState == get_node(\"/root/Game/Level\")):
+			pass
+		elif ScreenState == get_node(\"/root/Game/TitleScreen\"):
 			updateScreenState(get_node(\"/root/Game/QuitScreen\"))
 		elif ScreenState == get_node(\"/root/Game/StageSelectScreen\") || \\
 		ScreenState == get_node(\"/root/Game/OptionsScreen\") || \\
@@ -30,19 +32,44 @@ func _input(event):
 		else:
 			updateScreenState(LastScreenState)
 
+func _process(delta):
+	if CurrentLevel != null:
+		if CurrentLevel.exit == true:
+			for i in range(3):
+				if CurrentLevel.Orbs[i] != null:
+					CurrentLevel.DeleteOrbSelf(i)
+			updateScreenState(LastScreenState)
+			LastScreenState = get_node(\"/root/Game/StageSelectScreen\")
+			deleteCurrentLevel()
+		elif CurrentLevel.done == true:
+			var temp_x = ConfigurationSystem.Scores[CurrentLevel.stage - 1].x
+			var temp_y = ConfigurationSystem.Scores[CurrentLevel.stage - 1].y
+			var temp_z = ConfigurationSystem.Scores[CurrentLevel.stage - 1].z
+			var temps = Vector3(temp_x, temp_y, temp_z)
+			if CurrentLevel.score > temps[CurrentLevel.level - 1]:
+				temps[CurrentLevel.level - 1] = CurrentLevel.score
+			ConfigurationSystem.Scores[CurrentLevel.stage - 1] = temps
+			ConfigurationSystem.saveStageScores(CurrentLevel.stage)
+			updateStars(CurrentLevel.stage - 1, CurrentLevel.level - 1)
+			updateScreenState(LastScreenState)
+			LastScreenState = get_node(\"/root/Game/StageSelectScreen\")
+			deleteCurrentLevel()
+
 # Generation of level select screens
 onready var LevelSelectScreen = preload(\"res://src/scenes/LevelSelectScreen.tscn\")
-onready var LevelSelectScreen1 = LevelSelectScreen.instance()
-onready var LevelSelectScreen2 = LevelSelectScreen.instance()
-onready var LevelSelectScreen3 = LevelSelectScreen.instance()
-onready var LevelSelectScreen4 = LevelSelectScreen.instance()
-onready var LevelSelectScreen5 = LevelSelectScreen.instance()
+onready var LevelSelectScreen1 = null
+onready var LevelSelectScreen2 = null
+onready var LevelSelectScreen3 = null
+onready var LevelSelectScreen4 = null
+onready var LevelSelectScreen5 = null
 onready var LevelSelectScreens = [LevelSelectScreen1, LevelSelectScreen2, LevelSelectScreen3, LevelSelectScreen4, LevelSelectScreen5]
-onready var star_gray = preload(\"res://src/ui/star_yellow.png\")
+onready var star_gray = preload(\"res://src/ui/star_gray.png\")
+onready var star_yellow = preload(\"res://src/ui/star_yellow.png\")
 
 func generateLevelSelectScreens():
 	for x in range(5):
 		var temp
+		LevelSelectScreens[x] = LevelSelectScreen.instance()
 		add_child(LevelSelectScreens[x])
 		LevelSelectScreens[x].visible = false
 		LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/Back\") \\
@@ -55,21 +82,41 @@ func generateLevelSelectScreens():
 		$StageSelectScreen.get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer\" + temp + \"/Stage\" + String(x+1) + \"/Button\")\\
 		.connect(\"pressed\", self, \"_on_StageSelectScreenStage\" + String(x+1) + \"_pressed\")
 		LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer/Label\").text = \"Stage \" + String(x+1)
-		ConfigurationSystem.loadStageScores(x+1)
-		var tempScore = ConfigurationSystem.Scores[x]
-		var tempPath
 		# The following loop displays stars based on the score for that level.
 		for i in range(3):
-			tempPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/HBoxContainer/Star\"
-			if tempScore[i] >= 33:
-				LevelSelectScreens[x].get_node(tempPath + \"1\").set_texture(star_gray)
-			if tempScore[i] >= 67:
-				LevelSelectScreens[x].get_node(tempPath + \"2\").set_texture(star_gray)
-			if tempScore[i] == 100:
-				LevelSelectScreens[x].get_node(tempPath + \"3\").set_texture(star_gray)
+			updateStars(x,i)
 			LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\")\\
 			.connect(\"pressed\", self, \"_on_Stage\" + String(x+1) + \"Level\" + String(i+1) + \"_pressed\")
 			LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\").text = \"Level \" + String(i+1)
+
+func updateStars(stage_index, level_index):
+	ConfigurationSystem.loadStageScores(stage_index+1)
+	var tempScore = ConfigurationSystem.Scores[stage_index]
+	var tempPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(level_index+1) + \"/HBoxContainer/Star\"
+	LevelSelectScreens[stage_index].get_node(tempPath + \"1\").set_texture(star_gray)
+	LevelSelectScreens[stage_index].get_node(tempPath + \"2\").set_texture(star_gray)
+	LevelSelectScreens[stage_index].get_node(tempPath + \"3\").set_texture(star_gray)
+	var threshold1
+	var threshold2
+	var threshold3
+	if level_index == 0:
+		threshold1 = 10
+		threshold2 = 20
+		threshold3 = 30
+	elif level_index == 1:
+		threshold1 = 13
+		threshold2 = 27
+		threshold3 = 40
+	elif level_index == 2:
+		threshold1 = 17
+		threshold2 = 33
+		threshold3 = 50
+	if tempScore[level_index] >= threshold1:
+		LevelSelectScreens[stage_index].get_node(tempPath + \"1\").set_texture(star_yellow)
+	if tempScore[level_index] >= threshold2:
+		LevelSelectScreens[stage_index].get_node(tempPath + \"2\").set_texture(star_yellow)
+	if tempScore[level_index] == threshold3:
+		LevelSelectScreens[stage_index].get_node(tempPath + \"3\").set_texture(star_yellow)
 
 # Navigate into level select from each stage select
 func _on_StageSelectScreenStage1_pressed():
@@ -97,23 +144,32 @@ func _on_LevelSelectScreen5Back_pressed():
 
 #TODO: Add level implementation here
 func _on_Stage1Level1_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(1,1)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage1Level2_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(1,2)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage1Level3_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(1,3)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage2Level1_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(2,1)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage2Level2_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(2,2)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage2Level3_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(2,3)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage3Level1_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(3,1)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage3Level2_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(3,2)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage3Level3_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(3,3)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage4Level1_pressed():
 	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 func _on_Stage4Level2_pressed():
@@ -127,13 +183,28 @@ func _on_Stage5Level2_pressed():
 func _on_Stage5Level3_pressed():
 	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
+# Generation of level
+onready var Level = preload(\"res://src/scenes/Level.tscn\")
+onready var CurrentLevel = null
+
+func generateCurrentLevel(stage, level):
+	var temp
+	CurrentLevel = Level.instance()
+	add_child(CurrentLevel)
+	ConfigurationSystem.loadStageScores(stage)
+	CurrentLevel.stage = stage
+	CurrentLevel.level = level
+
+func deleteCurrentLevel():
+	CurrentLevel.queue_free()
+	CurrentLevel = null
+
 func _draw():
-	ScreenState.visible = false
+	ScreenState.visible = true
 	$OptionsScreen.visible = false
 	$QuitScreen.visible = false
 	$StageSelectScreen.visible = false
 	$UserEntryScreen.visible = false
-	$Test.visible = true
 	generateLevelSelectScreens()
 
 
@@ -216,12 +287,72 @@ visible = false
 editor/display_folded = true
 visible = false
 
+[node name="VBoxContainer" parent="OptionsScreen/CenteredContainer/HBoxContainer" index="0"]
+margin_left = 440.0
+margin_right = 840.0
+
+[node name="Title" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer" index="0"]
+margin_top = 230.0
+margin_right = 400.0
+margin_bottom = 290.0
+
 [node name="Label" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Title" index="0"]
 margin_right = 400.0
+
+[node name="SFX" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer" index="1"]
+margin_top = 305.0
+margin_right = 400.0
+margin_bottom = 335.0
+
+[node name="Label" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX" index="0"]
+margin_right = 171.0
+
+[node name="HSlider" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX" index="1"]
+margin_left = 175.0
+margin_right = 346.0
+
+[node name="Label2" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX" index="2"]
+margin_left = 350.0
+margin_right = 400.0
+
+[node name="Music" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer" index="2"]
+margin_right = 400.0
+margin_bottom = 380.0
+
+[node name="Label" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music" index="0"]
+margin_right = 171.0
+
+[node name="HSlider" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music" index="1"]
+margin_left = 175.0
+margin_right = 346.0
+
+[node name="Label2" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music" index="2"]
+margin_left = 350.0
+margin_right = 400.0
+
+[node name="ChangeName" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer" index="3"]
+margin_left = 120.0
+margin_top = 395.0
+margin_right = 280.0
+margin_bottom = 435.0
+
+[node name="Back" parent="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer" index="4"]
+margin_left = 120.0
+margin_top = 450.0
+margin_right = 280.0
+margin_bottom = 490.0
 
 [node name="QuitScreen" parent="." instance=ExtResource( 3 )]
 editor/display_folded = true
 visible = false
+
+[node name="Text" parent="QuitScreen/CenteredContainer/HBoxContainer/VBoxContainer" index="0"]
+margin_top = 317.0
+margin_bottom = 347.0
+
+[node name="HBoxContainer" parent="QuitScreen/CenteredContainer/HBoxContainer/VBoxContainer" index="1"]
+margin_top = 362.0
+margin_bottom = 402.0
 
 [node name="StageSelectScreen" parent="." instance=ExtResource( 4 )]
 editor/display_folded = true
