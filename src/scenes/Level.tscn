@@ -102,6 +102,11 @@ func _draw():
 		problemNumber = 40
 	elif difficulty == 3:
 		problemNumber = 50
+	var image = Image.new()
+	image.load(\"res://src/backgrounds/\" + String(stage) + \"_\" + String(level) + \".png\")
+	var imageTexture = ImageTexture.new()
+	imageTexture.create_from_image(image)
+	$Background.set_texture(imageTexture)
 
 func _physics_process(delta):
 	tierces += 1
@@ -316,6 +321,14 @@ font_data = ExtResource( 6 )
 [node name="Level" type="Node2D"]
 script = SubResource( 1 )
 
+[node name="Background" type="TextureRect" parent="."]
+margin_right = 1920.0
+margin_bottom = 1080.0
+rect_min_size = Vector2( 1280, 720 )
+rect_scale = Vector2( 0.667, 0.667 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
 [node name="PauseScreen" parent="." instance=ExtResource( 1 )]
 editor/display_folded = true
 visible = false
@@ -360,6 +373,7 @@ margin_right = 429.0
 text = "Your progress will not be saved if you exit now!"
 
 [node name="ResultsScreen" parent="." instance=ExtResource( 1 )]
+editor/display_folded = true
 visible = false
 theme = ExtResource( 2 )
 

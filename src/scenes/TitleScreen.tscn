@@ -65,20 +65,20 @@ custom_constants/separation = 10
 alignment = 1
 
 [node name="Label" type="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
-margin_left = 110.0
+margin_left = 118.0
 margin_top = 5.0
-margin_right = 190.0
+margin_right = 182.0
 margin_bottom = 25.0
 size_flags_horizontal = 4
 custom_fonts/font = SubResource( 2 )
-text = "Version 0.2"
+text = "Version 1"
 align = 1
 valign = 1
 
 [node name="LinkButton" type="LinkButton" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
-margin_left = 200.0
+margin_left = 192.0
 margin_top = 5.0
-margin_right = 290.0
+margin_right = 282.0
 margin_bottom = 25.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
