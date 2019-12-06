@@ -1,12 +1,13 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://src/backgrounds/1.png" type="Texture" id=1]
 [ext_resource path="res://src/scenes/TitleScreen.tscn" type="PackedScene" id=2]
-[ext_resource path="res://src/scenes/OptionsScreen.tscn" type="PackedScene" id=3]
-[ext_resource path="res://src/scenes/QuitScreen.tscn" type="PackedScene" id=4]
-[ext_resource path="res://src/scenes/StageSelectScreen.tscn" type="PackedScene" id=5]
-[ext_resource path="res://src/scenes/UserEntryScreen.tscn" type="PackedScene" id=6]
-[ext_resource path="res://src/scenes/Music.tscn" type="PackedScene" id=7]
+[ext_resource path="res://src/scenes/HelpScreen.tscn" type="PackedScene" id=3]
+[ext_resource path="res://src/scenes/OptionsScreen.tscn" type="PackedScene" id=4]
+[ext_resource path="res://src/scenes/QuitScreen.tscn" type="PackedScene" id=5]
+[ext_resource path="res://src/scenes/StageSelectScreen.tscn" type="PackedScene" id=6]
+[ext_resource path="res://src/scenes/UserEntryScreen.tscn" type="PackedScene" id=7]
+[ext_resource path="res://src/scenes/Music.tscn" type="PackedScene" id=8]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
@@ -52,6 +53,7 @@ func _process(delta):
 			ConfigurationSystem.Scores[CurrentLevel.stage - 1] = temps
 			ConfigurationSystem.saveStageScores(CurrentLevel.stage)
 			updateStars(CurrentLevel.stage - 1, CurrentLevel.level - 1)
+			updateUnlocking()
 			updateScreenState(LastScreenState)
 			LastScreenState = get_node(\"/root/Game/StageSelectScreen\")
 			deleteCurrentLevel()
@@ -88,6 +90,7 @@ func generateLevelSelectScreens():
 			LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\")\\
 			.connect(\"pressed\", self, \"_on_Stage\" + String(x+1) + \"Level\" + String(i+1) + \"_pressed\")
 			LevelSelectScreens[x].get_node(\"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel\" + String(i+1) + \"/MarginContainer2/Button\").text = \"Level \" + String(i+1)
+	updateUnlocking()
 
 func updateStars(stage_index, level_index):
 	ConfigurationSystem.loadStageScores(stage_index+1)
@@ -117,6 +120,30 @@ func updateStars(stage_index, level_index):
 		LevelSelectScreens[stage_index].get_node(tempPath + \"2\").set_texture(star_yellow)
 	if tempScore[level_index] == threshold3:
 		LevelSelectScreens[stage_index].get_node(tempPath + \"3\").set_texture(star_yellow)
+
+func updateUnlocking():
+	ConfigurationSystem.loadScores()
+	var temp
+	var stage2ButtonPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2/Button\"
+	var stage3ButtonPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage3/Button\"
+	var stage4ButtonPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage4/Button\"
+	var stageButtonPaths = [stage2ButtonPath, stage3ButtonPath, stage4ButtonPath]	
+	var level2ButtonPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel2/MarginContainer2/Button\"
+	var level3ButtonPath = \"CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel3/MarginContainer2/Button\"
+	var levelButtonPaths = [level2ButtonPath, level3ButtonPath]	
+	for i in range(3):
+		$StageSelectScreen.get_node(stageButtonPaths[i]).disabled = true
+		temp = ConfigurationSystem.Scores[i]
+		if (temp.x >= 20) and (temp.y >= 27) and (temp.z >= 33):
+			$StageSelectScreen.get_node(stageButtonPaths[i]).disabled = false
+	for i in range(4):
+		LevelSelectScreens[i].get_node(levelButtonPaths[0]).disabled = true
+		LevelSelectScreens[i].get_node(levelButtonPaths[1]).disabled = true
+		temp = ConfigurationSystem.Scores[i]
+		if temp.x >= 10:
+			LevelSelectScreens[i].get_node(levelButtonPaths[0]).disabled = false
+		if temp.y >= 13:
+			LevelSelectScreens[i].get_node(levelButtonPaths[1]).disabled = false
 
 # Navigate into level select from each stage select
 func _on_StageSelectScreenStage1_pressed():
@@ -199,16 +226,29 @@ func _draw():
 
 
 func _on_TitleScreenStart_pressed():
-	if ConfigurationSystem.User == \"\": # If no user exists, bring them to user creation screen, else bring them to stage select
-		updateScreenState(get_node(\"/root/Game/UserEntryScreen\"))
+	if ConfigurationSystem.User == \"\":
+		$HelpScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Continue.visible = true
+		updateScreenState(get_node(\"/root/Game/HelpScreen\"))
 	else:
 		updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
+
+func _on_TitleScreenHelp_pressed():
+	updateScreenState(get_node(\"/root/Game/HelpScreen\"))
 
 func _on_TitleScreenOptions_pressed():
 	updateScreenState(get_node(\"/root/Game/OptionsScreen\"))
 
 func _on_TitleScreenQuit_pressed():
 	updateScreenState(get_node(\"/root/Game/QuitScreen\"))
+
+
+func _on_HelpScreenContinue_pressed():
+	$HelpScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Continue.visible = false
+	updateScreenState(get_node(\"/root/Game/UserEntryScreen\"))
+
+func _on_HelpScreenBack_pressed():
+	$HelpScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Continue.visible = false
+	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
 
 
 func _on_OptionsScreenChangeName_pressed():
@@ -258,11 +298,11 @@ func _on_StageSelectBack_pressed():
 
 
 func _on_UserEntryScreenBack_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	updateScreenState(LastScreenState)
 
 
 func _on_UserEntryApply_pressed():
-	if LastScreenState == get_node(\"/root/Game/TitleScreen\"):
+	if LastScreenState == get_node(\"/root/Game/HelpScreen\"):
 		updateScreenState(get_node(\"/root/Game/StageSelectScreen\"))
 "
 
@@ -281,7 +321,10 @@ texture = ExtResource( 1 )
 editor/display_folded = true
 visible = false
 
-[node name="OptionsScreen" parent="." instance=ExtResource( 3 )]
+[node name="HelpScreen" parent="." instance=ExtResource( 3 )]
+visible = false
+
+[node name="OptionsScreen" parent="." instance=ExtResource( 4 )]
 editor/display_folded = true
 visible = false
 
@@ -340,7 +383,7 @@ margin_top = 450.0
 margin_right = 280.0
 margin_bottom = 490.0
 
-[node name="QuitScreen" parent="." instance=ExtResource( 4 )]
+[node name="QuitScreen" parent="." instance=ExtResource( 5 )]
 editor/display_folded = true
 visible = false
 
@@ -352,21 +395,24 @@ margin_bottom = 347.0
 margin_top = 362.0
 margin_bottom = 402.0
 
-[node name="StageSelectScreen" parent="." instance=ExtResource( 5 )]
+[node name="StageSelectScreen" parent="." instance=ExtResource( 6 )]
 editor/display_folded = true
 visible = false
 
-[node name="UserEntryScreen" parent="." instance=ExtResource( 6 )]
+[node name="UserEntryScreen" parent="." instance=ExtResource( 7 )]
 editor/display_folded = true
 visible = false
 
 [node name="LineEdit" parent="UserEntryScreen/CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2" index="0"]
 max_length = 20
 
-[node name="Music" parent="." instance=ExtResource( 7 )]
+[node name="Music" parent="." instance=ExtResource( 8 )]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Start" to="." method="_on_TitleScreenStart_pressed"]
+[connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Help" to="." method="_on_TitleScreenHelp_pressed"]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Options" to="." method="_on_TitleScreenOptions_pressed"]
 [connection signal="pressed" from="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Quit" to="." method="_on_TitleScreenQuit_pressed"]
+[connection signal="pressed" from="HelpScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Continue" to="." method="_on_HelpScreenContinue_pressed"]
+[connection signal="pressed" from="HelpScreen/CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Back" to="." method="_on_HelpScreenBack_pressed"]
 [connection signal="ready" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider" to="." method="_on_OptionsScreenSFXSlider_ready"]
 [connection signal="value_changed" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/SFX/HSlider" to="." method="_on_OptionsScreenSFXSlider_value_changed"]
 [connection signal="ready" from="OptionsScreen/CenteredContainer/HBoxContainer/VBoxContainer/Music/HSlider" to="." method="_on_OptionsScreenMusicSlider_ready"]
@@ -390,6 +436,12 @@ max_length = 20
 [editable path="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Options"]
 
 [editable path="TitleScreen/CenteredContainer/HBoxContainer/VBoxContainer/Quit"]
+
+[editable path="HelpScreen"]
+
+[editable path="HelpScreen/CenteredContainer"]
+
+[editable path="HelpScreen/CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer"]
 
 [editable path="OptionsScreen"]
 

@@ -24,9 +24,9 @@ margin_right = 867.0
 
 [node name="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 2 )]
 editor/display_folded = true
-margin_top = 105.0
+margin_top = 175.0
 margin_right = 455.0
-margin_bottom = 165.0
+margin_bottom = 235.0
 
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 455.0
@@ -35,18 +35,19 @@ text = "Stage Select"
 [node name="MarginContainer2" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="1" instance=ExtResource( 3 )]
 editor/display_folded = true
 margin_left = 67.0
-margin_top = 180.0
+margin_top = 250.0
 margin_right = 387.0
-margin_bottom = 210.0
+margin_bottom = 280.0
 
 [node name="HBoxContainer1" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="2"]
-margin_top = 225.0
+margin_top = 295.0
 margin_right = 455.0
 margin_bottom = 385.0
 custom_constants/separation = 15
 alignment = 1
 
 [node name="Stage1" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1" instance=ExtResource( 4 )]
+editor/display_folded = true
 
 [node name="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage1" index="0"]
 editor/display_folded = true
@@ -54,7 +55,7 @@ editor/display_folded = true
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage1/MarginContainer" index="0"]
 text = "Addition"
 
-[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage1" index="2"]
+[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage1" index="1"]
 text = "Stage 1"
 
 [node name="Stage2" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1" instance=ExtResource( 4 )]
@@ -65,21 +66,17 @@ margin_right = 455.0
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2/MarginContainer" index="0"]
 text = "Subtraction"
 
-[node name="MarginContainer2" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2" index="1"]
-editor/display_folded = true
-
-[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2" index="2"]
+[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2" index="1"]
 text = "Stage 2"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="3"]
 margin_top = 400.0
 margin_right = 455.0
-margin_bottom = 560.0
+margin_bottom = 490.0
 custom_constants/separation = 15
 alignment = 1
 
 [node name="Stage3" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2" instance=ExtResource( 4 )]
-editor/display_folded = true
 
 [node name="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage3" index="0"]
 editor/display_folded = true
@@ -87,28 +84,24 @@ editor/display_folded = true
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage3/MarginContainer" index="0"]
 text = "Multiplication"
 
-[node name="MarginContainer2" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage3" index="1"]
-editor/display_folded = true
-
-[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage3" index="2"]
+[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage3" index="1"]
 text = "Stage 3"
 
 [node name="Stage4" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2" instance=ExtResource( 4 )]
-editor/display_folded = true
 margin_left = 235.0
 margin_right = 455.0
 
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage4/MarginContainer" index="0"]
 text = "Division"
 
-[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage4" index="2"]
+[node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage4" index="1"]
 text = "Stage 4"
 
 [node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="4" instance=ExtResource( 5 )]
 margin_left = 147.0
-margin_top = 575.0
+margin_top = 505.0
 margin_right = 307.0
-margin_bottom = 615.0
+margin_bottom = 545.0
 text = "Back"
 
 [editable path="CenteredContainer"]
@@ -121,9 +114,13 @@ text = "Back"
 
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage1/MarginContainer"]
 
+[editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage1/Button"]
+
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2"]
 
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2/MarginContainer"]
+
+[editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer1/Stage2/Button"]
 
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage3"]
 
@@ -134,3 +131,5 @@ text = "Back"
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage4"]
 
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage4/MarginContainer"]
+
+[editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Stage4/Button"]

@@ -1,0 +1,81 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://src/scenes/CenteredContainer.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/ui/default.theme" type="Theme" id=2]
+[ext_resource path="res://src/scenes/LabelTitle.tscn" type="PackedScene" id=3]
+[ext_resource path="res://src/scenes/Button.tscn" type="PackedScene" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+func _draw():
+	if ConfigurationSystem.User != \"\":
+		$CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Continue.visible = false
+"
+
+[node name="HelpScreen" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="CenteredContainer" parent="." instance=ExtResource( 1 )]
+theme = ExtResource( 2 )
+
+[node name="VBoxContainer" parent="CenteredContainer/HBoxContainer" index="0"]
+margin_left = 240.0
+margin_right = 1040.0
+
+[node name="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 3 )]
+margin_top = 85.0
+margin_right = 800.0
+margin_bottom = 145.0
+
+[node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer" index="0"]
+margin_right = 800.0
+text = "Help"
+
+[node name="Panel" type="Panel" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="1"]
+margin_top = 160.0
+margin_right = 800.0
+margin_bottom = 580.0
+rect_min_size = Vector2( 800, 420 )
+
+[node name="Label" type="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/Panel"]
+margin_left = 20.0
+margin_top = 10.0
+margin_right = 780.0
+margin_bottom = 410.0
+rect_min_size = Vector2( 760, 400 )
+text = "Tap Tap Computation can be used to strengthen your math skills in solving addition, subtraction, multiplication, and division problems.
+
+To play, catch the correct falling answer to the math problem displayed at the top of the screen. 
+
+To move the bucket, use the \"Left Arrow\" and \"Right Arrow\" keys or the \"A\" and \"D\" keys. 
+
+The \"Escape\" key can be used to go back to the previous menu or pause the game.
+
+If you achieve one or more stars on a level, you will unlock the next level. If you achieve at least two stars on all three levels of a stage, you will unlock the next stage."
+valign = 1
+autowrap = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="2"]
+margin_top = 595.0
+margin_right = 800.0
+margin_bottom = 635.0
+custom_constants/separation = 10
+alignment = 1
+
+[node name="Continue" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
+visible = false
+margin_left = 235.0
+margin_right = 395.0
+margin_bottom = 40.0
+text = "Continue"
+
+[node name="Back" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
+margin_left = 320.0
+margin_right = 480.0
+margin_bottom = 40.0
+text = "Back"
+
+[editable path="CenteredContainer"]
+
+[editable path="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer"]

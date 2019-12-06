@@ -28,38 +28,45 @@ margin_left = 440.0
 margin_right = 840.0
 
 [node name="Title" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 2 )]
-margin_top = 225.0
+margin_top = 197.0
 margin_right = 400.0
-margin_bottom = 285.0
+margin_bottom = 257.0
 
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/Title" index="0"]
 text = "Tap Tap Computation"
 
 [node name="Start" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="1" instance=ExtResource( 3 )]
 margin_left = 120.0
-margin_top = 300.0
+margin_top = 272.0
 margin_right = 280.0
-margin_bottom = 340.0
+margin_bottom = 312.0
 text = "Start"
 
-[node name="Options" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="2" instance=ExtResource( 3 )]
+[node name="Help" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="2" instance=ExtResource( 3 )]
 margin_left = 120.0
-margin_top = 355.0
+margin_top = 327.0
 margin_right = 280.0
-margin_bottom = 395.0
+margin_bottom = 367.0
+text = "Help"
+
+[node name="Options" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="3" instance=ExtResource( 3 )]
+margin_left = 120.0
+margin_top = 382.0
+margin_right = 280.0
+margin_bottom = 422.0
 text = "Options"
 
-[node name="Quit" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="3" instance=ExtResource( 3 )]
+[node name="Quit" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="4" instance=ExtResource( 3 )]
 margin_left = 120.0
-margin_top = 410.0
+margin_top = 437.0
 margin_right = 280.0
-margin_bottom = 450.0
+margin_bottom = 477.0
 text = "Quit"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="4"]
-margin_top = 465.0
+[node name="HBoxContainer" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="5"]
+margin_top = 492.0
 margin_right = 400.0
-margin_bottom = 495.0
+margin_bottom = 522.0
 rect_min_size = Vector2( 0, 30 )
 custom_constants/separation = 10
 alignment = 1

@@ -29,6 +29,7 @@ custom_constants/separation = 15
 alignment = 1
 
 [node name="Panel1" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 3 )]
+editor/display_folded = true
 margin_bottom = 100.0
 
 [node name="Panel2" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 3 )]
@@ -38,7 +39,6 @@ margin_right = 295.0
 margin_bottom = 100.0
 
 [node name="Panel3" parent="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 3 )]
-editor/display_folded = true
 margin_left = 310.0
 margin_right = 450.0
 margin_bottom = 100.0
@@ -55,6 +55,8 @@ text = "Back"
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer"]
 
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel1"]
+
+[editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel1/MarginContainer2/Button"]
 
 [editable path="CenteredContainer/HBoxContainer/VBoxContainer/HBoxContainer/Panel2"]
 

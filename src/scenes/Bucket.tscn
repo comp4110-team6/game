@@ -7,7 +7,7 @@ script/source = "extends KinematicBody2D
 
 var width = ProjectSettings.get_setting(\"display/window/size/width\")
 
-const SPEED = 800
+var speed = 800
 const BUFFER = 100 # half of sprite width plus 20
 var velocity = Vector2(0, 0)
 
@@ -15,9 +15,9 @@ func _physics_process(delta):
 	if Input.is_action_pressed(\"ui_right\") and Input.is_action_pressed(\"ui_left\"):
 		velocity.x = 0
 	elif Input.is_action_pressed(\"ui_right\") and (position.x + BUFFER < width):
-		velocity.x = SPEED
+		velocity.x = speed
 	elif Input.is_action_pressed(\"ui_left\") and (position.x - BUFFER > 0):
-		velocity.x = -SPEED
+		velocity.x = -speed
 	else:
 		velocity.x = 0
 		
