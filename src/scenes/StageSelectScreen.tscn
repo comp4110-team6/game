@@ -24,9 +24,9 @@ margin_right = 867.0
 
 [node name="MarginContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="0" instance=ExtResource( 2 )]
 editor/display_folded = true
-margin_top = 175.0
+margin_top = 165.0
 margin_right = 455.0
-margin_bottom = 235.0
+margin_bottom = 225.0
 
 [node name="Label" parent="CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 455.0
@@ -35,12 +35,12 @@ text = "Stage Select"
 [node name="MarginContainer2" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="1" instance=ExtResource( 3 )]
 editor/display_folded = true
 margin_left = 67.0
-margin_top = 250.0
+margin_top = 240.0
 margin_right = 387.0
-margin_bottom = 280.0
+margin_bottom = 270.0
 
 [node name="HBoxContainer1" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="2"]
-margin_top = 295.0
+margin_top = 285.0
 margin_right = 455.0
 margin_bottom = 385.0
 custom_constants/separation = 15
@@ -72,7 +72,7 @@ text = "Stage 2"
 [node name="HBoxContainer2" type="HBoxContainer" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="3"]
 margin_top = 400.0
 margin_right = 455.0
-margin_bottom = 490.0
+margin_bottom = 500.0
 custom_constants/separation = 15
 alignment = 1
 
@@ -99,9 +99,9 @@ text = "Stage 4"
 
 [node name="Button" parent="CenteredContainer/HBoxContainer/VBoxContainer" index="4" instance=ExtResource( 5 )]
 margin_left = 147.0
-margin_top = 505.0
+margin_top = 515.0
 margin_right = 307.0
-margin_bottom = 545.0
+margin_bottom = 555.0
 text = "Back"
 
 [editable path="CenteredContainer"]

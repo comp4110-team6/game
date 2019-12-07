@@ -318,11 +318,13 @@ size_flags_vertical = 4
 texture = ExtResource( 1 )
 
 [node name="TitleScreen" parent="." instance=ExtResource( 2 )]
-editor/display_folded = true
 visible = false
 
 [node name="HelpScreen" parent="." instance=ExtResource( 3 )]
 visible = false
+
+[node name="VBoxContainer" parent="HelpScreen/CenteredContainer/HBoxContainer" index="0"]
+editor/display_folded = true
 
 [node name="OptionsScreen" parent="." instance=ExtResource( 4 )]
 editor/display_folded = true
@@ -396,11 +398,9 @@ margin_top = 362.0
 margin_bottom = 402.0
 
 [node name="StageSelectScreen" parent="." instance=ExtResource( 6 )]
-editor/display_folded = true
 visible = false
 
 [node name="UserEntryScreen" parent="." instance=ExtResource( 7 )]
-editor/display_folded = true
 visible = false
 
 [node name="LineEdit" parent="UserEntryScreen/CenteredContainer/HBoxContainer/VBoxContainer/MarginContainer2" index="0"]
