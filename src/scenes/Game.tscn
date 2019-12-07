@@ -194,11 +194,14 @@ func _on_Stage3Level3_pressed():
 	generateCurrentLevel(3,3)
 	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage4Level1_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(4,1)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage4Level2_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(4,2)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 func _on_Stage4Level3_pressed():
-	updateScreenState(get_node(\"/root/Game/TitleScreen\"))
+	generateCurrentLevel(4,3)
+	updateScreenState(get_node(\"/root/Game/Level\"))
 
 # Generation of level
 onready var Level = preload(\"res://src/scenes/Level.tscn\")

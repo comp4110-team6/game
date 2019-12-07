@@ -254,6 +254,14 @@ func ProblemGenerator(type):
 	elif type == \"multiplication\":
 		answer = num1 * num2
 		symbol = \" * \"
+	elif type == \"division\":
+		num1 = (randi() % 13) + 1
+		num2 = (randi() % 13) + 1
+		num1 = num1 * num2
+		while num1 % num2 != 0:
+			num2 = (randi() % 13) + 1
+		answer = num1 / num2
+		symbol = \" / \"
 	
 	# update question
 	question = String(num1) + symbol + String(num2)
